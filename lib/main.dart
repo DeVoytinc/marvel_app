@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:marvel_app/models/hero.dart';
+import 'package:marvel_app/models/models_data.dart';
 import 'package:marvel_app/screens/main_screen.dart';
 
 void main() {
@@ -10,6 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -17,7 +20,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MainScreen(),
+      home:  FutureBuilder(
+        future: fetchHeroes(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          } else {
+            return MainScreen(snapshot.data as List<MarvelHero>);
+          }
+        }
+      ),
     );
   }
 }

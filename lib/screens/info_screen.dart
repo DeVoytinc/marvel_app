@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:marvel_app/models/hero.dart';
+import 'package:marvel_app/models/models_data.dart';
 
 class InfoScreen extends StatefulWidget {
-  const InfoScreen({super.key, required this.hero});
+  const InfoScreen({super.key, required this.hero, required this.indeximageBG});
 
   final MarvelHero hero;
-
+  final int indeximageBG;
+  
   @override
   State<InfoScreen> createState() => _InfoScreenState();
 }
@@ -29,7 +31,7 @@ class _InfoScreenState extends State<InfoScreen> {
             padding: const EdgeInsets.only(top: 80),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: ExactAssetImage(widget.hero.imageBGPath),
+                image: ExactAssetImage(imagesBG[widget.indeximageBG]),
                 fit: BoxFit.cover,
               ),
             ),
@@ -41,7 +43,7 @@ class _InfoScreenState extends State<InfoScreen> {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: ExactAssetImage(widget.hero.imagePath),
+                    image: NetworkImage(widget.hero.imagePath),
                     fit: BoxFit.cover),
               ),
               child: Padding(

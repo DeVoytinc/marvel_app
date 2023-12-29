@@ -5,23 +5,30 @@ import 'package:marvel_app/screens/info_screen.dart';
 import 'package:marvel_app/widgets/marvel_logo.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen(this.marvelHeros, {Key? key}) : super(key: key);
+
+  final List<MarvelHero> marvelHeros;
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+
+  late List<MarvelHero> heros;
+
   late final PageController _pageController;
 
   int currentPage = 0;
+  int indeximageBG = 0;
 
-  _nextPage(MarvelHero hero) {
+  _nextPage(MarvelHero hero, int indeximageBG) {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => InfoScreen(
                 hero: hero,
+                indeximageBG: indeximageBG,
               )),
     );
   }
@@ -30,6 +37,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8);
+    heros = widget.marvelHeros;
   }
 
   @override
@@ -37,6 +45,7 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
     _pageController.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.only(top: 80),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: ExactAssetImage(heros[currentPage].imageBGPath),
+                image: ExactAssetImage(imagesBG[indeximageBG]),
                 fit: BoxFit.cover,
               ),
             ),
@@ -84,26 +93,28 @@ class _MainScreenState extends State<MainScreen> {
                     setState(
                       () {
                         currentPage = value;
+                        indeximageBG++;
+                        if (indeximageBG >= imagesBG.length - 1) indeximageBG = 0;
                       },
                     )
                   },
                   itemCount: heros.length,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, int index) {
-                    return AnimatedScale(
-                      scale: index == currentPage ? 1 : 0.8,
-                      duration: const Duration(milliseconds: 300),
-                      child: GestureDetector(
-                        onTap: () {
-                          _nextPage(heros[index]);
-                        },
+                    return GestureDetector( //row gesture detector
+                      onTap: () {
+                        _nextPage(heros[index], indeximageBG);
+                      },
+                      child: AnimatedScale(
+                        scale: index == currentPage ? 1 : 0.8,
+                        duration: const Duration(milliseconds: 300),
                         child: Hero(
                           tag: heros[index].name,
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               image: DecorationImage(
-                                  image: ExactAssetImage(heros[index].imagePath),
+                                  image: NetworkImage(heros[index].imagePath),
                                   fit: BoxFit.cover),
                             ),
                             child: Container(

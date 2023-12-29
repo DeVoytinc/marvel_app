@@ -1,8 +1,23 @@
 class MarvelHero {
-  final String name;
-  final String description;
-  final String imagePath;
-  final String imageBGPath;
+  late String name;
+  late String description;
+  late String imagePath;
+ // String imageBGPath ='assets/images/background/bluebg.png';
 
-  MarvelHero(this.name,  this.description, this.imagePath, this.imageBGPath,);
+  MarvelHero(
+   //String? imageBGPath,
+  {
+    required this.name, 
+    required this.description, 
+    required this.imagePath, 
+  }
+  );
+
+
+  MarvelHero.fromJson(Map<String, dynamic> json, String imageBGPath){
+    name = json['name'];
+    description = json['description'];
+    imagePath = json['thumbnail']['path'] + '.' + json['thumbnail']['extension'];
+    //this.imageBGPath = imageBGPath;
+  }
 }
