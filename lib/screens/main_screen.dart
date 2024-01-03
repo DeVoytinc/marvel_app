@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:marvel_app/models/hero.dart';
 import 'package:marvel_app/models/models_data.dart';
@@ -114,8 +116,9 @@ class _MainScreenState extends State<MainScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               image: DecorationImage(
-                                  image: NetworkImage(heros[index].imagePath),
-                                  fit: BoxFit.cover),
+                                image: getImageProvider(heros[index].imagePath),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                             child: Container(
                               alignment: Alignment.bottomLeft,
@@ -143,4 +146,18 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
+  bool isUrl(String path) {
+  return path.startsWith(RegExp(r'http?:\/\/'));
+}
+
+ImageProvider getImageProvider(String imagePath) {
+  if (isUrl(imagePath)) {
+    // Если это URL, возвращаем NetworkImage
+    return NetworkImage(imagePath);
+  } else {
+    // Если это локальный путь, возвращаем FileImage
+    return FileImage(File(imagePath));
+  }
+}
 }
