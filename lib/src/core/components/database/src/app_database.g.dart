@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'db_manager.dart';
+part of 'app_database.dart';
 
 // ignore_for_file: type=lint
 class $CharactersTable extends Characters
@@ -9,6 +9,11 @@ class $CharactersTable extends Characters
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $CharactersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -30,7 +35,7 @@ class $CharactersTable extends Characters
       'image_url', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns => [name, description, imageUrl];
+  List<GeneratedColumn> get $columns => [id, name, description, imageUrl];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -41,6 +46,9 @@ class $CharactersTable extends Characters
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
@@ -61,11 +69,13 @@ class $CharactersTable extends Characters
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {name};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Character map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Character(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
@@ -82,13 +92,16 @@ class $CharactersTable extends Characters
 }
 
 class Character extends DataClass implements Insertable<Character> {
+  final int id;
   final String name;
   final String? description;
   final String? imageUrl;
-  const Character({required this.name, this.description, this.imageUrl});
+  const Character(
+      {required this.id, required this.name, this.description, this.imageUrl});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -101,6 +114,7 @@ class Character extends DataClass implements Insertable<Character> {
 
   CharactersCompanion toCompanion(bool nullToAbsent) {
     return CharactersCompanion(
+      id: Value(id),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -115,6 +129,7 @@ class Character extends DataClass implements Insertable<Character> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Character(
+      id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       imageUrl: serializer.fromJson<String?>(json['imageUrl']),
@@ -124,6 +139,7 @@ class Character extends DataClass implements Insertable<Character> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'imageUrl': serializer.toJson<String?>(imageUrl),
@@ -131,10 +147,12 @@ class Character extends DataClass implements Insertable<Character> {
   }
 
   Character copyWith(
-          {String? name,
+          {int? id,
+          String? name,
           Value<String?> description = const Value.absent(),
           Value<String?> imageUrl = const Value.absent()}) =>
       Character(
+        id: id ?? this.id,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
@@ -142,6 +160,7 @@ class Character extends DataClass implements Insertable<Character> {
   @override
   String toString() {
     return (StringBuffer('Character(')
+          ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl')
@@ -150,63 +169,67 @@ class Character extends DataClass implements Insertable<Character> {
   }
 
   @override
-  int get hashCode => Object.hash(name, description, imageUrl);
+  int get hashCode => Object.hash(id, name, description, imageUrl);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Character &&
+          other.id == this.id &&
           other.name == this.name &&
           other.description == this.description &&
           other.imageUrl == this.imageUrl);
 }
 
 class CharactersCompanion extends UpdateCompanion<Character> {
+  final Value<int> id;
   final Value<String> name;
   final Value<String?> description;
   final Value<String?> imageUrl;
-  final Value<int> rowid;
   const CharactersCompanion({
+    this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.imageUrl = const Value.absent(),
-    this.rowid = const Value.absent(),
   });
   CharactersCompanion.insert({
+    this.id = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
     this.imageUrl = const Value.absent(),
-    this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Character> custom({
+    Expression<int>? id,
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? imageUrl,
-    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (imageUrl != null) 'image_url': imageUrl,
-      if (rowid != null) 'rowid': rowid,
     });
   }
 
   CharactersCompanion copyWith(
-      {Value<String>? name,
+      {Value<int>? id,
+      Value<String>? name,
       Value<String?>? description,
-      Value<String?>? imageUrl,
-      Value<int>? rowid}) {
+      Value<String?>? imageUrl}) {
     return CharactersCompanion(
+      id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
-      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -216,19 +239,16 @@ class CharactersCompanion extends UpdateCompanion<Character> {
     if (imageUrl.present) {
       map['image_url'] = Variable<String>(imageUrl.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('CharactersCompanion(')
+          ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('imageUrl: $imageUrl, ')
-          ..write('rowid: $rowid')
+          ..write('imageUrl: $imageUrl')
           ..write(')'))
         .toString();
   }

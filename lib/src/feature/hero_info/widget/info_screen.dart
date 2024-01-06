@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marvel_app/models/hero.dart';
-import 'package:marvel_app/models/models_data.dart';
+import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key, required this.hero, required this.indeximageBG});
@@ -13,7 +12,6 @@ class InfoScreen extends StatefulWidget {
 }
 
 class _InfoScreenState extends State<InfoScreen> {
-
 
   _backPage(){
       Navigator.pop(context);
@@ -30,10 +28,10 @@ class _InfoScreenState extends State<InfoScreen> {
             height: MediaQuery.of(context).size.height,
             padding: const EdgeInsets.only(top: 80),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: ExactAssetImage(imagesBG[widget.indeximageBG]),
-                fit: BoxFit.cover,
-              ),
+              // image: DecorationImage(
+              //   image: ExactAssetImage(imagesBG[widget.indeximageBG]),
+              //   fit: BoxFit.cover,
+              // ),
             ),
           ),
           Hero(

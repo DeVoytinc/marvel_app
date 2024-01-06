@@ -1,13 +1,18 @@
-import 'package:drift/drift.dart';
-import 'package:marvel_app/data/db_manager.dart';
+
+
+//import 'package:marvel_app/src/core/components/database/src/tables/heroes_table.dart';
+
+import 'package:marvel_app/src/core/components/database/src/app_database.dart';
 
 class MarvelHero {
+  late int id;
   late String name;
   late String description;
   late String imagePath;
 
   MarvelHero(
   {
+    required this.id,
     required this.name, 
     required this.description, 
     required this.imagePath, 
@@ -15,27 +20,30 @@ class MarvelHero {
   );
 
 
+
   MarvelHero.fromJson(Map<String, dynamic> json){
+    id = json['id'];
     name = json['name'];
     description = json['description'];
     imagePath = json['thumbnail']['path'] + '.' + json['thumbnail']['extension'];
   }
 
   // Конвертирует объект MarvelHero в CharactersCompanion для вставки в базу данных.
-  CharactersCompanion toCompanion() {
-    return CharactersCompanion(
-      name: Value(name),
-      description: Value(description),
-      imageUrl: Value(imagePath),
-    );
-  }
+  // CharactersCompanion toCompanion() {
+  //   return CharactersCompanion(
+  //     name: Value(name),
+  //     description: Value(description),
+  //     imageUrl: Value(imagePath),
+  //   );
+  // }
 
   // Создает объект MarvelHero из строки базы данных.
   static MarvelHero fromData(Character data) {
     return MarvelHero(
+      id: data.id,
       name: data.name,
       description: data.description ?? '',
-      imagePath: data.imageUrl ?? '',
+      imagePath: data.imageUrl ?? '', 
     );
   }
 }
