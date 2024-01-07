@@ -1,9 +1,13 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marvel_app/src/core/router/router.dart';
+import 'package:marvel_app/src/feature/home/data/data_source/marvel_api_data_source.dart';
+import 'package:marvel_app/src/feature/home/data/data_source/marvel_storage_data_source.dart';
+import 'package:marvel_app/src/feature/home/data/heroes_repository.dart';
 import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
 import 'package:marvel_app/models/models_data.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_bloc.dart';
@@ -31,6 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8);
+
+    MarvelHeroesRepositoryImpl repository = MarvelHeroesRepositoryImpl(
+      apiDataSource: MarvelApiDataSource(),
+      storageDataSource: MarvelStorageDataSource(),
+    );
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      // Обработка, когда пользователь тапает по уведомлению и приложение открывается
+      String heroId = message.data['heroId'];
+
+      List<MarvelHero> heroes = await repository.fetchHeroes();
+      MarvelHero hero =
+          heroes.where((element) => element.id.toString() == heroId).first;
+
+      // ignore: use_build_context_synchronously
+      context.router.push(InfoRoute(
+        hero: hero,
+        indeximageBG: indeximageBG));
+    });
   }
 
   @override

@@ -32,7 +32,7 @@ class App extends StatelessWidget {
               repositories: result.repositories,
               child: child,
             ),
-            child: const MaterialContext(),
+            child: MaterialContext(),
           ),
         ),
       );

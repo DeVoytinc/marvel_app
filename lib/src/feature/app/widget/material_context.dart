@@ -4,15 +4,19 @@ import 'package:marvel_app/src/feature/initialization/widget/dependencies_scope.
 
 
 class MaterialContext extends StatelessWidget {
-  const MaterialContext({super.key});
+  MaterialContext({super.key});
+
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     final router = DependenciesScope.dependenciesOf(context).router;
     return MaterialApp.router(
+      key: navigatorKey,
       routerConfig: router.config(),
       localizationsDelegates: Localization.localizationDelegates,
       supportedLocales: Localization.supportedLocales,
+      debugShowCheckedModeBanner: false,
       //theme: theme.lightTheme,
       //darkTheme: theme.darkTheme,
       locale: const Locale('es'),
