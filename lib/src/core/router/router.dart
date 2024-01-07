@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
 import 'package:marvel_app/src/feature/home/widget/home_screen.dart';
+import 'package:marvel_app/src/feature/hero_info/widget/info_screen.dart';
 
 part 'router.gr.dart';
 
@@ -14,17 +17,10 @@ class AppRouter extends _$AppRouter {
           page: HomeRoute.page,
           path: '/',
           initial: true,
-          // children: [
-          //   AutoRoute(
-          //     page: FactsRoute.page,
-          //     path: 'facts',
-          //     initial: true,
-          //   ),
-          //   AutoRoute(
-          //     page: HistoryRoute.page,
-          //     path: 'history',
-          //   )
-          // ],
+        ),
+        AutoRoute(
+          page: InfoRoute.page,
+          path: '/',
         ),
       ];
 }

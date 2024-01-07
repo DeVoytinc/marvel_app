@@ -20,7 +20,18 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: const HomeScreen(),
       );
-    }
+    },
+    InfoRoute.name: (routeData) {
+      final args = routeData.argsAs<InfoRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: InfoScreen(
+          key: args.key,
+          hero: args.hero,
+          indeximageBG: args.indeximageBG,
+        ),
+      );
+    },
   };
 }
 
@@ -36,4 +47,46 @@ class HomeRoute extends PageRouteInfo<void> {
   static const String name = 'HomeRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [InfoScreen]
+class InfoRoute extends PageRouteInfo<InfoRouteArgs> {
+  InfoRoute({
+    Key? key,
+    required MarvelHero hero,
+    required int indeximageBG,
+    List<PageRouteInfo>? children,
+  }) : super(
+          InfoRoute.name,
+          args: InfoRouteArgs(
+            key: key,
+            hero: hero,
+            indeximageBG: indeximageBG,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'InfoRoute';
+
+  static const PageInfo<InfoRouteArgs> page = PageInfo<InfoRouteArgs>(name);
+}
+
+class InfoRouteArgs {
+  const InfoRouteArgs({
+    this.key,
+    required this.hero,
+    required this.indeximageBG,
+  });
+
+  final Key? key;
+
+  final MarvelHero hero;
+
+  final int indeximageBG;
+
+  @override
+  String toString() {
+    return 'InfoRouteArgs{key: $key, hero: $hero, indeximageBG: $indeximageBG}';
+  }
 }

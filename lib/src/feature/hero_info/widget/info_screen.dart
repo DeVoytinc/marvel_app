@@ -1,21 +1,18 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:marvel_app/models/models_data.dart';
 import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
 
-class InfoScreen extends StatefulWidget {
+@RoutePage()
+class InfoScreen extends StatelessWidget {
   const InfoScreen({super.key, required this.hero, required this.indeximageBG});
 
   final MarvelHero hero;
   final int indeximageBG;
   
-  @override
-  State<InfoScreen> createState() => _InfoScreenState();
-}
-
-class _InfoScreenState extends State<InfoScreen> {
-
-  _backPage(){
-      Navigator.pop(context);
-  }
+  _backPage(BuildContext context) => context.router.pop();
+      //Navigator.pop(context);
+  
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +25,20 @@ class _InfoScreenState extends State<InfoScreen> {
             height: MediaQuery.of(context).size.height,
             padding: const EdgeInsets.only(top: 80),
             decoration: BoxDecoration(
-              // image: DecorationImage(
-              //   image: ExactAssetImage(imagesBG[widget.indeximageBG]),
-              //   fit: BoxFit.cover,
-              // ),
+              image: DecorationImage(
+                image: ExactAssetImage(imagesBG[indeximageBG]),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Hero(
-            tag: widget.hero.name,
+            tag: hero.name,
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: NetworkImage(widget.hero.imagePath),
+                    image: NetworkImage(hero.imagePath),
                     fit: BoxFit.cover),
               ),
               child: Padding(
@@ -51,14 +48,14 @@ class _InfoScreenState extends State<InfoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.hero.name,
+                      hero.name,
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 40,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      widget.hero.description,
+                      hero.description,
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 30,
@@ -73,7 +70,7 @@ class _InfoScreenState extends State<InfoScreen> {
             padding: const EdgeInsets.all(18.0),
             child: IconButton(
               alignment: Alignment.topLeft,
-              onPressed: () {_backPage();},
+              onPressed: () {_backPage(context);},
               icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white,

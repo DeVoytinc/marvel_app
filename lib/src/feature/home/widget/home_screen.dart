@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:marvel_app/src/core/router/router.dart';
 import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
 import 'package:marvel_app/models/models_data.dart';
-import 'package:marvel_app/src/feature/hero_info/widget/info_screen.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_bloc.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_event.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_state.dart';
@@ -20,22 +20,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   late final PageController _pageController;
 
   int currentPage = 0;
   int indeximageBG = 0;
 
-  _nextPage(MarvelHero hero, int indeximageBG) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => InfoScreen(
-                hero: hero,
-                indeximageBG: indeximageBG,
-              )),
-    );
-  }
+  bool imagesLoaded = false;
 
   @override
   void initState() {
@@ -47,6 +37,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     super.dispose();
     _pageController.dispose();
+  }
+
+  Future<void> precacheImages(List<String> imageList) async {
+    for (var imagePath in imageList) {
+      await precacheImage(AssetImage(imagePath), context);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Предварительно загружаем изображения
+    precacheImages(imagesBG).then((_) {
+      setState(() {
+        imagesLoaded = true;
+      });
+    });
   }
 
   @override
@@ -97,7 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     } else if (state is HomeLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is HomeLoaded) {
-
                       List<MarvelHero> heroes = state.heroes;
 
                       return PageView.builder(
@@ -105,10 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPageChanged: (value) => {
                           setState(
                             () {
+                              indeximageBG = value % imagesBG.length;
                               currentPage = value;
-                              indeximageBG++;
-                              if (indeximageBG >= imagesBG.length - 1)
-                                indeximageBG = 0;
                             },
                           )
                         },
@@ -118,7 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           return GestureDetector(
                             //row gesture detector
                             onTap: () {
-                              _nextPage(heroes[index], indeximageBG);
+                              context.router.push(InfoRoute(
+                                  hero: heroes[index],
+                                  indeximageBG: indeximageBG));
                             },
                             child: AnimatedScale(
                               scale: index == currentPage ? 1 : 0.8,
