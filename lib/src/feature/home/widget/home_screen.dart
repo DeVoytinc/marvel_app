@@ -9,11 +9,10 @@ import 'package:marvel_app/src/feature/home/data/data_source/marvel_api_data_sou
 import 'package:marvel_app/src/feature/home/data/data_source/marvel_storage_data_source.dart';
 import 'package:marvel_app/src/feature/home/data/heroes_repository.dart';
 import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
-import 'package:marvel_app/models/models_data.dart';
+import 'package:marvel_app/backgrounds/backgrounds.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_bloc.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_event.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_state.dart';
-import 'package:marvel_app/widgets/marvel_logo.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
@@ -100,11 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(
+              Padding(
+                padding: const EdgeInsets.only(
                   top: 50,
                 ),
-                child: MarvelLogo(),
+                child: Image.asset(
+                  'assets/images/marvel.png',
+                  height: 50,
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 40.0),
