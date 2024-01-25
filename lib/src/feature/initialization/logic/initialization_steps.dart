@@ -23,7 +23,7 @@ mixin InitializationSteps {
       );
     },
     'Init Drift Database': (progress) async {
-      final marvelDatabase = await DatabaseManager.database;
+      final marvelDatabase = AppDatabase();
       return progress.copyWith(
         database: marvelDatabase,
       );
@@ -31,9 +31,10 @@ mixin InitializationSteps {
   };
   static final _data = <String, StepAction>{
     'Init Marvel Heroes Repository': (progress) {
+      var marvelStorageDataSource = MarvelHeroDao(progress.database!);
       final marvelHeroesRepository = MarvelHeroesRepositoryImpl(
         apiDataSource: MarvelApiDataSource(), 
-        storageDataSource: MarvelStorageDataSource(),
+        storageDataSource: marvelStorageDataSource,
       );
       return progress.copyWith(
         marvelHeroesRepository: marvelHeroesRepository,

@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:marvel_app/models/models_data.dart';
+import 'package:marvel_app/backgrounds/backgrounds.dart';
 import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
 
 @RoutePage()
@@ -9,10 +11,8 @@ class InfoScreen extends StatelessWidget {
 
   final MarvelHero hero;
   final int indeximageBG;
-  
-  _backPage(BuildContext context) => context.router.pop();
-      //Navigator.pop(context);
-  
+
+  void _backPage(BuildContext context) => context.router.pop();
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +38,7 @@ class InfoScreen extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: NetworkImage(hero.imagePath),
-                    fit: BoxFit.cover),
+                    image: getImageProvider(hero.imagePath), fit: BoxFit.cover),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -70,7 +69,9 @@ class InfoScreen extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: IconButton(
               alignment: Alignment.topLeft,
-              onPressed: () {_backPage(context);},
+              onPressed: () {
+                _backPage(context);
+              },
               icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white,
@@ -80,5 +81,19 @@ class InfoScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool isUrl(String path) {
+    return path.startsWith(RegExp(r'http?:\/\/'));
+  }
+
+  ImageProvider getImageProvider(String imagePath) {
+    if (isUrl(imagePath)) {
+      // Если это URL, возвращаем NetworkImage
+      return NetworkImage(imagePath);
+    } else {
+      // Если это локальный путь, возвращаем FileImage
+      return FileImage(File(imagePath));
+    }
   }
 }

@@ -61,7 +61,7 @@ dependencies:
   shared_preferences: ^2.2.2
   drift: ^2.13.1
   drift_sqflite: ^2.0.1
-  #sqlite3_flutter_libs: ^0.5.18
+  #sqlite3_flutter_libs: ^0.5.19+1
 
   # Logging
   stack_trace: ^1.11.0

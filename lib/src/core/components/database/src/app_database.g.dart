@@ -3,44 +3,61 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $CharactersTable extends Characters
-    with TableInfo<$CharactersTable, Character> {
+class Characters extends Table with TableInfo<Characters, Character> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $CharactersTable(this.attachedDatabase, [this._alias]);
+  Characters(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL PRIMARY KEY');
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+      'createdAt', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL DEFAULT (strftime(\'%s\', \'now\'))',
+      defaultValue: const CustomExpression('strftime(\'%s\', \'now\')'));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+      'updatedAt', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL DEFAULT (strftime(\'%s\', \'now\'))',
+      defaultValue: const CustomExpression('strftime(\'%s\', \'now\')'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 100),
       type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
-  @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
       'description', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
   static const VerificationMeta _imageUrlMeta =
       const VerificationMeta('imageUrl');
-  @override
   late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
-      'image_url', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      'imageUrl', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   @override
-  List<GeneratedColumn> get $columns => [id, name, description, imageUrl];
+  List<GeneratedColumn> get $columns =>
+      [id, createdAt, updatedAt, name, description, imageUrl];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'characters';
+  static const String $name = 'Characters';
   @override
   VerificationContext validateIntegrity(Insertable<Character> instance,
       {bool isInserting = false}) {
@@ -48,6 +65,14 @@ class $CharactersTable extends Characters
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('createdAt')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['createdAt']!, _createdAtMeta));
+    }
+    if (data.containsKey('updatedAt')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updatedAt']!, _updatedAtMeta));
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -61,9 +86,11 @@ class $CharactersTable extends Characters
           description.isAcceptableOrUnknown(
               data['description']!, _descriptionMeta));
     }
-    if (data.containsKey('image_url')) {
+    if (data.containsKey('imageUrl')) {
       context.handle(_imageUrlMeta,
-          imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta));
+          imageUrl.isAcceptableOrUnknown(data['imageUrl']!, _imageUrlMeta));
+    } else if (isInserting) {
+      context.missing(_imageUrlMeta);
     }
     return context;
   }
@@ -76,52 +103,66 @@ class $CharactersTable extends Characters
     return Character(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}createdAt'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}updatedAt'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       imageUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}image_url']),
+          .read(DriftSqlType.string, data['${effectivePrefix}imageUrl'])!,
     );
   }
 
   @override
-  $CharactersTable createAlias(String alias) {
-    return $CharactersTable(attachedDatabase, alias);
+  Characters createAlias(String alias) {
+    return Characters(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class Character extends DataClass implements Insertable<Character> {
   final int id;
+  final int createdAt;
+  final int updatedAt;
   final String name;
   final String? description;
-  final String? imageUrl;
+  final String imageUrl;
   const Character(
-      {required this.id, required this.name, this.description, this.imageUrl});
+      {required this.id,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.name,
+      this.description,
+      required this.imageUrl});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['createdAt'] = Variable<int>(createdAt);
+    map['updatedAt'] = Variable<int>(updatedAt);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    if (!nullToAbsent || imageUrl != null) {
-      map['image_url'] = Variable<String>(imageUrl);
-    }
+    map['imageUrl'] = Variable<String>(imageUrl);
     return map;
   }
 
   CharactersCompanion toCompanion(bool nullToAbsent) {
     return CharactersCompanion(
       id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      imageUrl: imageUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imageUrl),
+      imageUrl: Value(imageUrl),
     );
   }
 
@@ -130,9 +171,11 @@ class Character extends DataClass implements Insertable<Character> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Character(
       id: serializer.fromJson<int>(json['id']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
-      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
+      imageUrl: serializer.fromJson<String>(json['imageUrl']),
     );
   }
   @override
@@ -140,27 +183,35 @@ class Character extends DataClass implements Insertable<Character> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
-      'imageUrl': serializer.toJson<String?>(imageUrl),
+      'imageUrl': serializer.toJson<String>(imageUrl),
     };
   }
 
   Character copyWith(
           {int? id,
+          int? createdAt,
+          int? updatedAt,
           String? name,
           Value<String?> description = const Value.absent(),
-          Value<String?> imageUrl = const Value.absent()}) =>
+          String? imageUrl}) =>
       Character(
         id: id ?? this.id,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
-        imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
+        imageUrl: imageUrl ?? this.imageUrl,
       );
   @override
   String toString() {
     return (StringBuffer('Character(')
           ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl')
@@ -169,12 +220,15 @@ class Character extends DataClass implements Insertable<Character> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, description, imageUrl);
+  int get hashCode =>
+      Object.hash(id, createdAt, updatedAt, name, description, imageUrl);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Character &&
           other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
           other.name == this.name &&
           other.description == this.description &&
           other.imageUrl == this.imageUrl);
@@ -182,42 +236,57 @@ class Character extends DataClass implements Insertable<Character> {
 
 class CharactersCompanion extends UpdateCompanion<Character> {
   final Value<int> id;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
   final Value<String> name;
   final Value<String?> description;
-  final Value<String?> imageUrl;
+  final Value<String> imageUrl;
   const CharactersCompanion({
     this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.imageUrl = const Value.absent(),
   });
   CharactersCompanion.insert({
     this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
-    this.imageUrl = const Value.absent(),
-  }) : name = Value(name);
+    required String imageUrl,
+  })  : name = Value(name),
+        imageUrl = Value(imageUrl);
   static Insertable<Character> custom({
     Expression<int>? id,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? imageUrl,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (createdAt != null) 'createdAt': createdAt,
+      if (updatedAt != null) 'updatedAt': updatedAt,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
-      if (imageUrl != null) 'image_url': imageUrl,
+      if (imageUrl != null) 'imageUrl': imageUrl,
     });
   }
 
   CharactersCompanion copyWith(
       {Value<int>? id,
+      Value<int>? createdAt,
+      Value<int>? updatedAt,
       Value<String>? name,
       Value<String?>? description,
-      Value<String?>? imageUrl}) {
+      Value<String>? imageUrl}) {
     return CharactersCompanion(
       id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -230,6 +299,12 @@ class CharactersCompanion extends UpdateCompanion<Character> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
+    if (createdAt.present) {
+      map['createdAt'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updatedAt'] = Variable<int>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -237,7 +312,7 @@ class CharactersCompanion extends UpdateCompanion<Character> {
       map['description'] = Variable<String>(description.value);
     }
     if (imageUrl.present) {
-      map['image_url'] = Variable<String>(imageUrl.value);
+      map['imageUrl'] = Variable<String>(imageUrl.value);
     }
     return map;
   }
@@ -246,6 +321,8 @@ class CharactersCompanion extends UpdateCompanion<Character> {
   String toString() {
     return (StringBuffer('CharactersCompanion(')
           ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl')
@@ -256,7 +333,7 @@ class CharactersCompanion extends UpdateCompanion<Character> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
-  late final $CharactersTable characters = $CharactersTable(this);
+  late final Characters characters = Characters(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

@@ -15,7 +15,7 @@ class MarvelHeroesRepositoryImpl extends MarvelHeroesRepository{
   @override
   Future<List<MarvelHero>> fetchHeroes() async {
     try {
-      return await apiDataSource.fetchHeroesFromApi();
+      return await apiDataSource.fetchHeroesFromApi(storageDataSource);
     } catch (apiError) {
       print('Error fetching data from API: $apiError');
       try {

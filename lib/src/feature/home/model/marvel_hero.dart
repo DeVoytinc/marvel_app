@@ -28,14 +28,6 @@ class MarvelHero {
     imagePath = json['thumbnail']['path'] + '.' + json['thumbnail']['extension'];
   }
 
-  // Конвертирует объект MarvelHero в CharactersCompanion для вставки в базу данных.
-  // CharactersCompanion toCompanion() {
-  //   return CharactersCompanion(
-  //     name: Value(name),
-  //     description: Value(description),
-  //     imageUrl: Value(imagePath),
-  //   );
-  // }
 
   // Создает объект MarvelHero из строки базы данных.
   static MarvelHero fromData(Character data) {
@@ -43,7 +35,7 @@ class MarvelHero {
       id: data.id,
       name: data.name,
       description: data.description ?? '',
-      imagePath: data.imageUrl ?? '', 
+      imagePath: data.imageUrl, 
     );
   }
 }
