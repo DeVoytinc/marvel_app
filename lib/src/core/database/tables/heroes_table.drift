@@ -1,0 +1,8 @@
+CREATE TABLE Characters (
+    id INT NOT NULL PRIMARY KEY,
+    createdAt INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+    updatedAt INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    imageUrl VARCHAR(255) NOT NULL,
+);
