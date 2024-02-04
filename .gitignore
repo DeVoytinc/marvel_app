@@ -9,6 +9,9 @@
 .history
 .svn/
 migrate_working_dir/
+*.g.dart
+*.freezed.dart
+*/gen/
 
 # IntelliJ related
 *.iml

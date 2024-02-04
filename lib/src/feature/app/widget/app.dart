@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:marvel_app/src/core/widget/scope_widgets.dart';
 import 'package:marvel_app/src/feature/app/widget/material_context.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_bloc.dart';
-import 'package:marvel_app/src/feature/initialization/model/initialization_progress.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:marvel_app/src/feature/initialization/widget/dependencies_scope.dart';
+import 'package:marvel_app/src/feature/initialization/model/dependencies.dart';
+import 'package:marvel_app/src/feature/initialization/widget/dependencies_provider.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -15,25 +13,20 @@ class App extends StatelessWidget {
 
   void run() => runApp(this);
 
-  final InitializationResult result;
+  final Dependencies result;
 
   @override
-  Widget build(BuildContext context) => DefaultAssetBundle(
-        bundle: SentryAssetBundle(),
+  Widget build(BuildContext context) => DependenciesProvider(
+        dependencies: result,
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) => HomeBloc(repository: result.repositories.marvelHeroesRepository)
+              create: (context) => HomeBloc(
+                marvelHeroesService: result.heroesService,
+              ),
             ),
           ],
-          child: ScopeProvider(
-            buildScope: (child) => DependenciesScope(
-              dependencies: result.dependencies,
-              repositories: result.repositories,
-              child: child,
-            ),
-            child: MaterialContext(),
-          ),
+          child: const MaterialContext(),
         ),
       );
 }

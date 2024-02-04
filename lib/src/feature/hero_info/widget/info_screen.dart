@@ -2,98 +2,73 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:marvel_app/backgrounds/backgrounds.dart';
 import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
+import 'package:marvel_app/src/feature/home/widget/diagonal_background_painter.dart';
 
 @RoutePage()
 class InfoScreen extends StatelessWidget {
-  const InfoScreen({super.key, required this.hero, required this.indeximageBG});
+  const InfoScreen({required this.hero, required this.bgPainter, super.key});
 
   final MarvelHero hero;
-  final int indeximageBG;
+  final DiagonalBackgroundPainter bgPainter;
 
   void _backPage(BuildContext context) => context.router.pop();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      //appBar: AppBar(backgroundColor: Colors.transparent,),
-      body: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            padding: const EdgeInsets.only(top: 80),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: ExactAssetImage(imagesBG[indeximageBG]),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Hero(
+  Widget build(BuildContext context) => Scaffold(
+    body: Stack( 
+      children: [
+        CustomPaint(
+          painter: bgPainter,
+          child: const Center(),
+        ),
+        Positioned.fill(
+          child: Hero(
             tag: hero.name,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: getImageProvider(hero.imagePath), fit: BoxFit.cover),
+                  image: FileImage(File(hero.imagePath)),
+                  fit: BoxFit.cover,
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      hero.name,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      hero.description,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.8,
+                      ),
+                      Text(
+                        hero.name,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Text(
+                        hero.description,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: IconButton(
-              alignment: Alignment.topLeft,
-              onPressed: () {
-                _backPage(context);
-              },
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: IconButton(
+            alignment: Alignment.topLeft,
+            onPressed: () => _backPage(context),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  bool isUrl(String path) {
-    return path.startsWith(RegExp(r'http?:\/\/'));
-  }
-
-  ImageProvider getImageProvider(String imagePath) {
-    if (isUrl(imagePath)) {
-      // Если это URL, возвращаем NetworkImage
-      return NetworkImage(imagePath);
-    } else {
-      // Если это локальный путь, возвращаем FileImage
-      return FileImage(File(imagePath));
-    }
-  }
+        ),
+      ],
+    ),
+  );
 }

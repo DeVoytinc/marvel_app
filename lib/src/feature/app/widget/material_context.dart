@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:marvel_app/src/core/localization/localization.dart';
-import 'package:marvel_app/src/feature/initialization/widget/dependencies_scope.dart';
+import 'package:marvel_app/generated/l10n.dart';
+import 'package:marvel_app/src/feature/app/model/app_theme.dart';
+import 'package:marvel_app/src/feature/initialization/widget/dependencies_provider.dart';
 
 
 class MaterialContext extends StatelessWidget {
-  MaterialContext({super.key});
+  const MaterialContext({super.key});
 
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
-    final router = DependenciesScope.dependenciesOf(context).router;
+    final router = DependenciesProvider.of(context).route;
     return MaterialApp.router(
       key: navigatorKey,
       routerConfig: router.config(),
-      localizationsDelegates: Localization.localizationDelegates,
-      supportedLocales: Localization.supportedLocales,
+      localizationsDelegates: const [S.delegate],
+      supportedLocales: S.delegate.supportedLocales,
       debugShowCheckedModeBanner: false,
-      //theme: theme.lightTheme,
-      //darkTheme: theme.darkTheme,
-      locale: const Locale('es'),
+      locale: const Locale('en'),
+      theme: appTheme(context),
     );
   }
 }

@@ -4,16 +4,20 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:marvel_app/generated/l10n.dart';
+import 'package:marvel_app/src/core/constants/colors.dart';
+import 'package:marvel_app/src/core/constants/image_path.dart';
 import 'package:marvel_app/src/core/router/router.dart';
-import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
-import 'package:marvel_app/backgrounds/backgrounds.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_bloc.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_event.dart';
 import 'package:marvel_app/src/feature/home/bloc/home_state.dart';
+import 'package:marvel_app/src/feature/home/model/marvel_hero.dart';
+
+import 'package:marvel_app/src/feature/home/widget/diagonal_background_painter.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -21,16 +25,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final PageController _pageController;
+  late DiagonalBackgroundPainter backgroundPainter;
 
   int currentPage = 0;
   int indeximageBG = 0;
-
-  bool imagesLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8);
+    backgroundPainter = DiagonalBackgroundPainter(paintColor: Colors.red);
   }
 
   @override
@@ -39,168 +43,130 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController.dispose();
   }
 
-  Future<void> precacheImages(List<String> imageList) async {
-    for (var imagePath in imageList) {
-      await precacheImage(AssetImage(imagePath), context);
-    }
-  }
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Предварительно загружаем изображения
-    precacheImages(imagesBG).then((_) {
-      setState(() {
-        imagesLoaded = true;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            padding: const EdgeInsets.only(top: 80),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: ExactAssetImage(imagesBG[indeximageBG]),
-                fit: BoxFit.cover,
+  Widget build(BuildContext context) => Scaffold(
+    body: Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          painter: backgroundPainter,
+          child: const Center(),
+        ),
+        Column(
+          children: [
+            const SizedBox(height: 50,),
+            Expanded(
+              child: Image.asset(
+                marvelLogo,
+                height: 50,
               ),
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 50,
-                ),
-                child: Image.asset(
-                  'assets/images/marvel.png',
-                  height: 50,
-                ),
+            const SizedBox(height: 20,),
+            Expanded(
+              flex: 2,
+              child: Text(
+                S.of(context).chooseYourHero,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 40.0),
-                child: Text(
-                  'Choose your hero',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 1.5,
-                child: BlocBuilder<HomeBloc, HomeState>(
-                  builder: (context, state) {
-                    if (state is HomeInitial) {
-                      context.read<HomeBloc>().add(FetchData());
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is HomeLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is HomeLoaded) {
-                      List<MarvelHero> heroes = state.heroes;
+            ),
+            Expanded(
+              flex: 10,
+              child: BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeInitial) {
+                    context.read<HomeBloc>().add(FetchData());
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is HomeLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is HomeLoaded) {
+                    final List<MarvelHero> heroes = state.heroes;
 
-                      // Обработка, когда пользователь тапает по уведомлению и приложение открывается
-                      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-                        String heroId = message.data['heroId'];
+                    // Обработка, когда пользователь тапает по уведомлению
+                    FirebaseMessaging.onMessageOpenedApp
+                        .listen((RemoteMessage message) async {
+                      final String heroId =
+                          message.data['heroId'] as String;
 
-                        MarvelHero hero =
-                            heroes.where((element) => element.id.toString() == heroId).first;
-
-                        // ignore: use_build_context_synchronously
-                        context.router.push(InfoRoute(
-                          hero: hero,
-                          indeximageBG: indeximageBG));
-                      });
-
-                      return PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (value) => {
-                          setState(
-                            () {
-                              indeximageBG = value % imagesBG.length;
-                              currentPage = value;
-                            },
+                      final MarvelHero hero = heroes
+                          .where(
+                            (element) => element.id.toString() == heroId,
                           )
+                          .first;
+
+                      await context.router.push(
+                        InfoRoute(
+                          hero: hero,
+                          bgPainter: backgroundPainter,
+                        ),
+                      );
+                    });
+
+                    return PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (value) => {
+                        setState(
+                          () {
+                            indeximageBG = value % bgColors.length;
+                            backgroundPainter = DiagonalBackgroundPainter(
+                                paintColor: bgColors[indeximageBG]);
+                            currentPage = value;
+                          },
+                        ),
+                      },
+                      itemCount: heroes.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, int index) => GestureDetector(
+                        onTap: () {
+                          context.router.push(
+                            InfoRoute(
+                              hero: heroes[index],
+                              bgPainter: backgroundPainter,
+                            ),
+                          );
                         },
-                        itemCount: heroes.length,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, int index) {
-                          return GestureDetector(
-                            //row gesture detector
-                            onTap: () {
-                              context.router.push(InfoRoute(
-                                  hero: heroes[index],
-                                  indeximageBG: indeximageBG));
-                            },
-                            child: AnimatedScale(
-                              scale: index == currentPage ? 1 : 0.8,
-                              duration: const Duration(milliseconds: 300),
-                              child: Hero(
-                                tag: heroes[index].name,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    image: DecorationImage(
-                                      image: getImageProvider(
-                                          heroes[index].imagePath),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  child: Container(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(25.0),
-                                      child: Text(
-                                        heroes[index].name,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
+                        child: AnimatedScale(
+                          scale: index == currentPage ? 1 : 0.8,
+                          duration: const Duration(milliseconds: 300),
+                          child: Hero(
+                            tag: heroes[index].name,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: FileImage(
+                                      File(heroes[index].imagePath)),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: Container(
+                                alignment: Alignment.bottomLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: Text(
+                                    heroes[index].name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium,
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      );
-                    } else if (state is HomeError) {
-                      return Text('Ошибка: ${state.message}');
-                    } else {
-                      return Text('Нечего отображать');
-                    }
-                  },
-                ),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else if (state is HomeError) {
+                    return Text('Erorr: ${state.message}');
+                  } else {
+                    return Text(S.of(context).noDataForDisplay);
+                  }
+                },
               ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  bool isUrl(String path) {
-    return path.startsWith(RegExp(r'http?:\/\/'));
-  }
-
-  ImageProvider getImageProvider(String imagePath) {
-    if (isUrl(imagePath)) {
-      // Если это URL, возвращаем NetworkImage
-      return NetworkImage(imagePath);
-    } else {
-      // Если это локальный путь, возвращаем FileImage
-      return FileImage(File(imagePath));
-    }
-  }
+            ),
+            const SizedBox(height: 40,),
+          ],
+        ),
+      ],
+    ),
+  );
 }

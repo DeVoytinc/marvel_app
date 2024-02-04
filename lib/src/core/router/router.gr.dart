@@ -28,7 +28,7 @@ abstract class _$AppRouter extends RootStackRouter {
         child: InfoScreen(
           key: args.key,
           hero: args.hero,
-          indeximageBG: args.indeximageBG,
+          bgPainter: args.bgPainter,
         ),
       );
     },
@@ -55,14 +55,14 @@ class InfoRoute extends PageRouteInfo<InfoRouteArgs> {
   InfoRoute({
     Key? key,
     required MarvelHero hero,
-    required int indeximageBG,
+    required DiagonalBackgroundPainter bgPainter,
     List<PageRouteInfo>? children,
   }) : super(
           InfoRoute.name,
           args: InfoRouteArgs(
             key: key,
             hero: hero,
-            indeximageBG: indeximageBG,
+            bgPainter: bgPainter,
           ),
           initialChildren: children,
         );
@@ -76,17 +76,17 @@ class InfoRouteArgs {
   const InfoRouteArgs({
     this.key,
     required this.hero,
-    required this.indeximageBG,
+    required this.bgPainter,
   });
 
   final Key? key;
 
   final MarvelHero hero;
 
-  final int indeximageBG;
+  final DiagonalBackgroundPainter bgPainter;
 
   @override
   String toString() {
-    return 'InfoRouteArgs{key: $key, hero: $hero, indeximageBG: $indeximageBG}';
+    return 'InfoRouteArgs{key: $key, hero: $hero, bgPainter: $bgPainter}';
   }
 }

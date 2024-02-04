@@ -12,77 +12,11 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  $AssetsImagesBackgroundGen get background =>
-      const $AssetsImagesBackgroundGen();
-  $AssetsImagesHerosGen get heros => const $AssetsImagesHerosGen();
-
   /// File path: assets/images/marvel.png
   AssetGenImage get marvel => const AssetGenImage('assets/images/marvel.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [marvel];
-}
-
-class $AssetsImagesBackgroundGen {
-  const $AssetsImagesBackgroundGen();
-
-  /// File path: assets/images/background/bluebg.png
-  AssetGenImage get bluebg =>
-      const AssetGenImage('assets/images/background/bluebg.png');
-
-  /// File path: assets/images/background/greenbg.png
-  AssetGenImage get greenbg =>
-      const AssetGenImage('assets/images/background/greenbg.png');
-
-  /// File path: assets/images/background/purplebg.png
-  AssetGenImage get purplebg =>
-      const AssetGenImage('assets/images/background/purplebg.png');
-
-  /// File path: assets/images/background/redbg.png
-  AssetGenImage get redbg =>
-      const AssetGenImage('assets/images/background/redbg.png');
-
-  /// File path: assets/images/background/yellowbg.png
-  AssetGenImage get yellowbg =>
-      const AssetGenImage('assets/images/background/yellowbg.png');
-
-  /// List of all assets
-  List<AssetGenImage> get values =>
-      [bluebg, greenbg, purplebg, redbg, yellowbg];
-}
-
-class $AssetsImagesHerosGen {
-  const $AssetsImagesHerosGen();
-
-  /// File path: assets/images/heros/capitan.jpg
-  AssetGenImage get capitan =>
-      const AssetGenImage('assets/images/heros/capitan.jpg');
-
-  /// File path: assets/images/heros/dedpool.jpg
-  AssetGenImage get dedpool =>
-      const AssetGenImage('assets/images/heros/dedpool.jpg');
-
-  /// File path: assets/images/heros/iron.jpg
-  AssetGenImage get iron => const AssetGenImage('assets/images/heros/iron.jpg');
-
-  /// File path: assets/images/heros/spiderman.jpg
-  AssetGenImage get spiderman =>
-      const AssetGenImage('assets/images/heros/spiderman.jpg');
-
-  /// File path: assets/images/heros/strange.jpg
-  AssetGenImage get strange =>
-      const AssetGenImage('assets/images/heros/strange.jpg');
-
-  /// File path: assets/images/heros/tanos.jpg
-  AssetGenImage get tanos =>
-      const AssetGenImage('assets/images/heros/tanos.jpg');
-
-  /// File path: assets/images/heros/thor.jpg
-  AssetGenImage get thor => const AssetGenImage('assets/images/heros/thor.jpg');
-
-  /// List of all assets
-  List<AssetGenImage> get values =>
-      [capitan, dedpool, iron, spiderman, strange, tanos, thor];
 }
 
 class Assets {

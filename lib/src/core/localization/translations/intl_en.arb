@@ -1,9 +1,0 @@
-{
-    "appTitle": "marvel_app",
-    "@appTitle": {
-      "description": "The title of the application"
-    },
-    "custom_colors": "Custom Colors",
-    "default_themes": "Default Themes",
-    "locales": "Locales"
-  }
