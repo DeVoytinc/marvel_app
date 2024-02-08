@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:marvel_app/generated/l10n.dart';
 import 'package:marvel_app/src/core/constants/colors.dart';
-import 'package:marvel_app/src/feature/home/diagonal_background_painter.dart';
+import 'package:marvel_app/src/core/constants/image_path.dart';
 import 'package:marvel_app/src/feature/home/model/models_data.dart';
-import 'package:marvel_app/widgets/marvel_logo.dart';
+import 'package:marvel_app/src/feature/home/widget/diagonal_background_painter.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -46,7 +46,12 @@ class _MainScreenState extends State<MainScreen> {
             const SizedBox(
               height: 50,
             ),
-            const Expanded(child: MarvelLogo()),
+            Expanded(
+              child: Image.asset(
+                marvelLogo,
+                height: 50,
+              ),
+            ),
             const SizedBox(height: 20,),
             Expanded(
               flex: 2,
